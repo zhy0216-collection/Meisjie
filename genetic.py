@@ -1,5 +1,5 @@
 import random
-from PIL import Image
+from PIL import Image, ImageDraw
 import pyglet
 
 '''
@@ -42,17 +42,61 @@ class Myimage(object):
     def fitness(self, other):
         return sum([pix_diff(x, y) for x, y in zip(self.image_data, other.image_data)])
 
-class ImagePopulation(object):
+class PolygonImage(object):
+
+    
+    def __init__(self):
+        self.points = None
+        self.colors = None
+
+    def randomlize(self, max_vertex=6):
+        self.points = [(random.randint(0, Myimage.SIZE[0]), random.randint(0, Myimage.SIZE[1])) \
+                     for i in range(random.randint(3, max_vertex))]
+        self.colors = random_color()
+
+    def mutate(self):
+        pass
+
+    def _mutate_point(self):
+        pass
+
+    def _mutate_color(self):
+        pass
+
+class ImagePopulation(pyglet.sprite.Sprite):
     
     SIZE = 50
+    MAX_SIZE = 255
 
-    def __init__(self, population=None):
+    def __init__(self, image, x=0, y=0, population=None):
+        super(self.__class__, self).__init__(image, x=x, y=y)
+
         ## this contain population
         self.population = population or []
 
 
     def mutate(self):
         x = random.random()
+
+    def add_polygon(self):
+        if len(self.population) <= 255:
+            pass
+
+    def remove_polygon(self):
+        pass
+
+    def move_polygon(self):
+        pass
+
+    def update_image(self):
+        temp_image = Image.new('RGB', (200, 200))
+        drw = ImageDraw.Draw(temp_image, 'RGBA')
+        for poly in self.population:
+            drw.polygon(*poly)
+
+        self.image = pyglet.image.ImageData(200, 200, 'RGB', temp_image.tobytes(), pitch= -200 * 3)
+        # sprite = pyglet.sprite.Sprite(image)
+        # self.random_population()
 
 
     def random_population(self):
@@ -65,6 +109,7 @@ class ImagePopulation(object):
 
     def read(self, name="test"):
         pass
+
 
 
 
