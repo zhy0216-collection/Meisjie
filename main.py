@@ -21,8 +21,7 @@ if __name__ == "__main__":
         initial_population.draw()
 
     def ga(dt):
-        while 1:
-            initial_population.random_population()
+        initial_population.random_population()
 
     # clock.schedule_interval(callback, .5)
     pyglet.clock.schedule_interval(lambda dt: initial_population.update_image(), 1/60.)

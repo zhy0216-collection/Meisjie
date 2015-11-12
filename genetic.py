@@ -1,4 +1,6 @@
+import copy
 import random
+
 from PIL import Image, ImageDraw
 import pyglet
 
@@ -7,13 +9,11 @@ AIMA: page 129
 
 '''
 
-def random_gen_poly(max_vertex=6):
-        return [[(random.randint(0, Myimage.SIZE[0]), random.randint(0, Myimage.SIZE[1])) \
-                     for i in range(random.randint(3, max_vertex))], random_color()]
+## return True if one nth possiblity happened, else False
+def is_randomized(n):
+    return random.randint(0, n) == 0
 
 
-def random_color():
-    return tuple([random.randint(0, 255) for i in range(4)])
 
 class Myimage(object):
 
@@ -43,16 +43,21 @@ class Myimage(object):
         return sum([pix_diff(x, y) for x, y in zip(self.image_data, other.image_data)])
 
 class PolygonImage(object):
+    COLOR_CHANGE_RATE = 1500
 
-    
+
     def __init__(self):
         self.points = None
         self.colors = None
 
-    def randomlize(self, max_vertex=6):
+    def randomize(self, max_vertex=6):
         self.points = [(random.randint(0, Myimage.SIZE[0]), random.randint(0, Myimage.SIZE[1])) \
                      for i in range(random.randint(3, max_vertex))]
-        self.colors = random_color()
+        self.colors = self.random_color()
+        return self
+
+    def random_color(self):
+        return tuple([random.randint(0, 255) for i in range(4)])
 
     def mutate(self):
         pass
@@ -60,8 +65,10 @@ class PolygonImage(object):
     def _mutate_point(self):
         pass
 
-    def _mutate_color(self):
-        pass
+    def _mutate_color(self, position=0):
+        colors = list(self.colors)
+        colors[position] = random.randint(0, 255)
+        self.colors = tuple(colors)
 
 class ImagePopulation(pyglet.sprite.Sprite):
     
@@ -79,30 +86,45 @@ class ImagePopulation(pyglet.sprite.Sprite):
         x = random.random()
 
     def add_polygon(self):
-        if len(self.population) <= 255:
-            pass
+        length = len(self.population)
+        if length < self.MAX_SIZE:
+            index = random.randint(0, length+1)
+            self.population.insert(index, PolygonImage().randomize())
 
     def remove_polygon(self):
-        pass
+        length = len(self.population)
+        if length > 0:
+            index = random.randint(0, length)
+            self.population.pop(index)
 
     def move_polygon(self):
-        pass
+        ## the original implementation seems verbose,
+        ## i think its just swap
+
+        length = len(self.population)
+        if length < 1:
+            return
+        index1 = random.randint(0, length)
+        index2 = random.randint(0, length)
+        temp = self.population[index1]
+        self.population[index1] = self.population[index2]
+        self.population[index2] = temp
+
 
     def update_image(self):
         temp_image = Image.new('RGB', (200, 200))
         drw = ImageDraw.Draw(temp_image, 'RGBA')
         for poly in self.population:
-            drw.polygon(*poly)
+            drw.polygon(poly.points, poly.colors)
 
         self.image = pyglet.image.ImageData(200, 200, 'RGB', temp_image.tobytes(), pitch= -200 * 3)
         # sprite = pyglet.sprite.Sprite(image)
         # self.random_population()
 
-
     def random_population(self):
         self.population = []
         for i in range(self.SIZE):
-            self.population.append(random_gen_poly())
+            self.population.append(PolygonImage().randomize())
 
     def save(self, name="test"):
         pass
@@ -110,8 +132,8 @@ class ImagePopulation(pyglet.sprite.Sprite):
     def read(self, name="test"):
         pass
 
-
-
+    def copy(self):
+        return copy.deepcopy(self)
 
 
 
