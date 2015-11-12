@@ -40,10 +40,10 @@ class Myimage(object):
 
     @classmethod
     def pix_diff(cls, pix1, pix2):
-        return sum([ x*x - y*y for x, y in zip(pix1, pix2)])
+        return sum([ (x-y)**2 for x, y in zip(pix1, pix2)])
 
     def fitness(self, other):
-        return sum([pix_diff(x, y) for x, y in zip(self.image_data, other.image_data)])
+        return sum([self.pix_diff(x, y) for x, y in zip(self.image_data, other.image_data)])
 
 class PolygonImage(object):
     COLOR_CHANGE_RATE = 1500
@@ -101,23 +101,26 @@ class ImagePopulation(pyglet.sprite.Sprite):
         self.population = population or []
         self.dirty = False
         self._fitness = None
+        self.myimage = None
 
 
     def mutate(self):
         if is_randomized(700):
             self.add_polygon()
             self.dirty = True
+            print "add"
 
         if is_randomized(1500):
             self.remove_polygon()
             self.dirty = True
+            print "remove"
 
         if is_randomized(700):
             self.move_polygon()
             self.dirty = True
 
         for polyimage in self.population:
-            self.dirty = self.dirty or polyimage.mute()
+            self.dirty = self.dirty or polyimage.mutate()
 
     def add_polygon(self):
         length = len(self.population)
@@ -146,9 +149,6 @@ class ImagePopulation(pyglet.sprite.Sprite):
 
 
     def update_image(self):
-        if not self.dirty:
-            return
-
         temp_image = Image.new('RGB', (200, 200))
         drw = ImageDraw.Draw(temp_image, 'RGBA')
         for poly in self.population:
@@ -171,7 +171,11 @@ class ImagePopulation(pyglet.sprite.Sprite):
         pass
 
     def copy(self):
-        return copy.deepcopy(self)
+        new_self = copy.copy(self)
+        new_self.population = copy.deepcopy(self.population)
+        new_self._fitness = None
+        new_self.dirty = False
+        return new_self
 
     @property 
     def fitness(self):
