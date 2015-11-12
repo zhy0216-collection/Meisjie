@@ -48,7 +48,6 @@ class Myimage(object):
 class PolygonImage(object):
     COLOR_CHANGE_RATE = 1500
 
-
     def __init__(self):
         self.points = None
         self.colors = None
@@ -63,9 +62,25 @@ class PolygonImage(object):
         return tuple([random.randint(0, 255) for i in range(4)])
 
     def mutate(self):
+        dirty = False
+        if is_randomized(1500):
+            self.add_point()
+            dirty = True
+
+        if is_randomized(1500):
+            self.remove_point()
+            dirty = True
+
+        for position in range(4):
+            if is_randomized(1500):
+                self._mutate_color(position=position)
+                dirty = True
+        return dirty
+
+    def add_point(self):
         pass
 
-    def _mutate_point(self):
+    def remove_point(self):
         pass
 
     def _mutate_color(self, position=0):
@@ -89,7 +104,20 @@ class ImagePopulation(pyglet.sprite.Sprite):
 
 
     def mutate(self):
-        x = random.random()
+        if is_randomized(700):
+            self.add_polygon()
+            self.dirty = True
+
+        if is_randomized(1500):
+            self.remove_polygon()
+            self.dirty = True
+
+        if is_randomized(700):
+            self.move_polygon()
+            self.dirty = True
+
+        for polyimage in self.population:
+            self.dirty = self.dirty or polyimage.mute()
 
     def add_polygon(self):
         length = len(self.population)
