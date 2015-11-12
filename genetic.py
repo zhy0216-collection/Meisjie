@@ -19,9 +19,9 @@ class Myimage(object):
 
     SIZE = (200, 200)
 
-    def __init__(self):
-        self.image = None
-        self._image_data = None
+    def __init__(self, image=None):
+        self.image = image
+        self._image_data = image and image.getdata() or None
 
     @classmethod
     def from_file(cls, filename="sample.png"):
@@ -33,7 +33,10 @@ class Myimage(object):
 
     @property 
     def image_data(self):
-        return self._image_data or self.image.getdata()
+        if self._image_data:
+            return self._image_data
+        self._image_data = self.image.getdata()
+        return self._image_data 
 
     @classmethod
     def pix_diff(cls, pix1, pix2):
@@ -74,12 +77,15 @@ class ImagePopulation(pyglet.sprite.Sprite):
     
     SIZE = 50
     MAX_SIZE = 255
+    REFRENCE_IMAGE = None
 
     def __init__(self, image, x=0, y=0, population=None):
         super(self.__class__, self).__init__(image, x=x, y=y)
 
         ## this contain population
         self.population = population or []
+        self.dirty = False
+        self._fitness = None
 
 
     def mutate(self):
@@ -112,11 +118,15 @@ class ImagePopulation(pyglet.sprite.Sprite):
 
 
     def update_image(self):
+        if not self.dirty:
+            return
+
         temp_image = Image.new('RGB', (200, 200))
         drw = ImageDraw.Draw(temp_image, 'RGBA')
         for poly in self.population:
             drw.polygon(poly.points, poly.colors)
 
+        self.myimage = Myimage(temp_image)
         self.image = pyglet.image.ImageData(200, 200, 'RGB', temp_image.tobytes(), pitch= -200 * 3)
         # sprite = pyglet.sprite.Sprite(image)
         # self.random_population()
@@ -134,6 +144,15 @@ class ImagePopulation(pyglet.sprite.Sprite):
 
     def copy(self):
         return copy.deepcopy(self)
+
+    @property 
+    def fitness(self):
+        if self._fitness:
+            return self._fitness
+
+        # calculate it and assign to _fitness and return it
+        self._fitness = self.myimage.fitness(ImagePopulation.REFRENCE_IMAGE)
+        return self._fitness
 
 
 
