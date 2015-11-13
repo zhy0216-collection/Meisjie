@@ -47,13 +47,15 @@ class Myimage(object):
 
 class PolygonImage(object):
     COLOR_CHANGE_RATE = 1500
+    MAX_VERTEX = 10
 
     def __init__(self):
         self.points = None
         self.colors = None
 
-    def randomize(self, max_vertex=6):
-        self.points = [self.make_random_point() for i in range(random.randint(3, max_vertex))]
+    def randomize(self, max_vertex=0):
+        max_vertex = max_vertex or PolygonImage.MAX_VERTEX
+        self.points = [self.make_random_point() for i in range(3)]
         self.colors = self.random_color()
         return self
 
@@ -77,22 +79,23 @@ class PolygonImage(object):
                 self._mutate_color(position=position)
                 dirty = True
 
-        # for points in self.points:
-        #     if is_randomized(1500):
-        #         pass
+        for point in self.points:
+            if is_randomized(1500):
+                point = self.make_random_point()
+                dirty = True
 
         return dirty
 
     def add_point(self):
         length = len(self.points)
-        if length < 6:
+        if length < PolygonImage.MAX_VERTEX:
             index = random.randint(0, length)
             self.points.insert(index, self.make_random_point())
             return True
 
     def remove_point(self):
         length = len(self.points)
-        if length > 3:
+        if length > 2:
             index = random.randint(0, length-1)
             self.points.pop(index)
             return True
@@ -109,7 +112,7 @@ class ImagePopulation(pyglet.sprite.Sprite):
     MAX_SIZE = 255
     REFRENCE_IMAGE = None
 
-    def __init__(self, image, x=0, y=0, population=None):
+    def __init__(self, image, x=220, y=140, population=None):
         super(self.__class__, self).__init__(image, x=x, y=y)
 
         ## this contain population
