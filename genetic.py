@@ -53,35 +53,50 @@ class PolygonImage(object):
         self.colors = None
 
     def randomize(self, max_vertex=6):
-        self.points = [(random.randint(0, Myimage.SIZE[0]), random.randint(0, Myimage.SIZE[1])) \
-                     for i in range(random.randint(3, max_vertex))]
+        self.points = [self.make_random_point() for i in range(random.randint(3, max_vertex))]
         self.colors = self.random_color()
         return self
 
     def random_color(self):
         return tuple([random.randint(0, 255) for i in range(4)])
 
+    @classmethod
+    def make_random_point(cls):
+        return (random.randint(0, Myimage.SIZE[0]), random.randint(0, Myimage.SIZE[1]))
+
     def mutate(self):
         dirty = False
         if is_randomized(1500):
-            self.add_point()
-            dirty = True
+            dirty = self.add_point()
 
         if is_randomized(1500):
-            self.remove_point()
-            dirty = True
+            dirty = dirty or self.remove_point()
 
         for position in range(4):
             if is_randomized(1500):
                 self._mutate_color(position=position)
                 dirty = True
+
+        # for points in self.points:
+        #     if is_randomized(1500):
+        #         pass
+
         return dirty
 
     def add_point(self):
-        pass
+        length = len(self.points)
+        if length < 6:
+            index = random.randint(0, length)
+            self.points.insert(index, self.make_random_point())
+            return True
 
     def remove_point(self):
-        pass
+        length = len(self.points)
+        if length > 3:
+            index = random.randint(0, length-1)
+            self.points.pop(index)
+            return True
+
 
     def _mutate_color(self, position=0):
         colors = list(self.colors)
@@ -107,17 +122,12 @@ class ImagePopulation(pyglet.sprite.Sprite):
     def mutate(self):
         if is_randomized(700):
             self.add_polygon()
-            self.dirty = True
-            print "add"
 
         if is_randomized(1500):
             self.remove_polygon()
-            self.dirty = True
-            print "remove"
 
         if is_randomized(700):
             self.move_polygon()
-            self.dirty = True
 
         for polyimage in self.population:
             self.dirty = self.dirty or polyimage.mutate()
@@ -125,14 +135,16 @@ class ImagePopulation(pyglet.sprite.Sprite):
     def add_polygon(self):
         length = len(self.population)
         if length < self.MAX_SIZE:
-            index = random.randint(0, length+1)
+            index = random.randint(0, length)
             self.population.insert(index, PolygonImage().randomize())
+            self.dirty = True
 
     def remove_polygon(self):
         length = len(self.population)
         if length > 0:
-            index = random.randint(0, length)
+            index = random.randint(0, length-1)
             self.population.pop(index)
+            self.dirty = True
 
     def move_polygon(self):
         ## the original implementation seems verbose,
@@ -141,11 +153,12 @@ class ImagePopulation(pyglet.sprite.Sprite):
         length = len(self.population)
         if length < 1:
             return
-        index1 = random.randint(0, length)
-        index2 = random.randint(0, length)
+        index1 = random.randint(0, length-1)
+        index2 = random.randint(0, length-1)
         temp = self.population[index1]
         self.population[index1] = self.population[index2]
         self.population[index2] = temp
+        self.dirty = True
 
 
     def update_image(self):
