@@ -29,7 +29,7 @@ if __name__ == "__main__":
                 print "current_evolve:%s"%current_evolve
                 initial_population = new_population
                 if current_evolve % 100 == 0:
-                    new_population.save_image()
+                    new_population.save_image(name="%s.jpg"%current_evolve)
 
 
 

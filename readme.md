@@ -3,7 +3,7 @@ Meisje~~~
 a simple project re-implement [Roger Johansson's idea](http://rogeralsing.com/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
 
 the original image is:
-![alt tag](http://url/to/img.png)
+![alt tag](https://raw.githubusercontent.com/zhy0216/Meisjie/master/sample.png)
 
 extra note:
 speed up: process the video  

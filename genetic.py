@@ -181,8 +181,9 @@ class ImagePopulation(object):
         new_self.dirty = False
         return new_self
 
-    def save_image(self):
-        pass
+    def save_image(self, name=None):
+        name = name or "random%s"%random.randint(1000, 50000)
+        self.myimage.image.save("image/"+name)
 
 
     @property 
