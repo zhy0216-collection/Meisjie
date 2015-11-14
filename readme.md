@@ -5,7 +5,7 @@ a simple project re-implement [Roger Johansson's idea](http://rogeralsing.com/20
 the original image is:
 ![alt tag](https://raw.githubusercontent.com/zhy0216/Meisjie/master/sample.png)
 
-extra note:
+##Extra note:
 speed up: process the video  
 https://support.apple.com/kb/PH2239?locale=en_US
 
