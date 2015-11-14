@@ -63,5 +63,5 @@ docs/_build/
 .DS_Store
 
 image/*
-!image/__init__.py
+!image/*.py
 
