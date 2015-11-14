@@ -2,7 +2,7 @@ import copy
 import random
 
 from PIL import Image, ImageDraw
-import pyglet
+
 
 '''
 AIMA: page 129
@@ -12,7 +12,6 @@ AIMA: page 129
 ## return True if one nth possiblity happened, else False
 def is_randomized(n):
     return random.randint(0, n) == 0
-
 
 
 class Myimage(object):
@@ -107,15 +106,13 @@ class PolygonImage(object):
         colors[position] = random.randint(0, 255)
         self.colors = tuple(colors)
 
-class ImagePopulation(pyglet.sprite.Sprite):
+class ImagePopulation(object):
     
     SIZE = 50
     MAX_SIZE = 255
     REFRENCE_IMAGE = None
 
-    def __init__(self, image, x=220, y=140, population=None):
-        super(self.__class__, self).__init__(image, x=x, y=y)
-
+    def __init__(self, population=None):
         ## this contain population
         self.population = population or []
         self.dirty = False
@@ -164,28 +161,10 @@ class ImagePopulation(pyglet.sprite.Sprite):
         self.population[index2] = temp
         self.dirty = True
 
-
-    def update_image(self):
-        temp_image = Image.new('RGB', (200, 200))
-        drw = ImageDraw.Draw(temp_image, 'RGBA')
-        for poly in self.population:
-            drw.polygon(poly.points, poly.colors)
-
-        self.myimage = Myimage(temp_image)
-        self.image = pyglet.image.ImageData(200, 200, 'RGB', temp_image.tobytes(), pitch= -200 * 3)
-        # sprite = pyglet.sprite.Sprite(image)
-        # self.random_population()
-
     def random_population(self):
         self.population = []
         for i in range(self.SIZE):
             self.population.append(PolygonImage().randomize())
-
-    def save(self, name="test"):
-        pass
-
-    def read(self, name="test"):
-        pass
 
     def copy(self):
         new_self = copy.copy(self)
