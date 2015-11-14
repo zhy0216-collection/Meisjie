@@ -79,9 +79,10 @@ class PolygonImage(object):
                 self._mutate_color(position=position)
                 dirty = True
 
-        for point in self.points:
+        for i, point in enumerate(self.points):
             if is_randomized(1500):
-                point = self.make_random_point()
+                self.make_random_point()
+                self.points[i] = self.make_random_point()
                 dirty = True
 
         return dirty
