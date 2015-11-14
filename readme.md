@@ -6,6 +6,10 @@ the original image is:
 
 ![alt tag](https://raw.githubusercontent.com/zhy0216/Meisjie/master/sample.png)
 
+the result image is:
+
+![alt tag](https://raw.githubusercontent.com/zhy0216/Meisjie/master/result.jpg)
+
 the process of evolve:
 
 ![alt tag](https://raw.githubusercontent.com/zhy0216/Meisjie/master/animated.gif)
