@@ -8,12 +8,9 @@ class ImagePopulationSprite(pyglet.sprite.Sprite, ImagePopulation):
         ImagePopulation.__init__(self, population=population)
 
     def update_image(self):
-        temp_image = Image.new('RGB', (200, 200))
-        drw = ImageDraw.Draw(temp_image, 'RGBA')
-        for poly in self.population:
-            drw.polygon(poly.points, poly.colors)
-
-        self.myimage = Myimage(temp_image)
-        self.image = pyglet.image.ImageData(200, 200, 'RGB', temp_image.tobytes(), pitch= -200 * 3)
+        ImagePopulation.update_image(self)
+        self.image = pyglet.image.ImageData(200, 200, 'RGB', 
+                                            self.myimage.image.tobytes(), 
+                                            pitch= -200 * 3)
         # sprite = pyglet.sprite.Sprite(image)
         # self.random_population()

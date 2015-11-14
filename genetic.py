@@ -161,6 +161,14 @@ class ImagePopulation(object):
         self.population[index2] = temp
         self.dirty = True
 
+    def update_image(self):
+        temp_image = Image.new('RGB', (200, 200))
+        drw = ImageDraw.Draw(temp_image, 'RGBA')
+        for poly in self.population:
+            drw.polygon(poly.points, poly.colors)
+
+        self.myimage = Myimage(temp_image)
+
     def random_population(self):
         self.population = []
         for i in range(self.SIZE):
@@ -172,6 +180,10 @@ class ImagePopulation(object):
         new_self._fitness = None
         new_self.dirty = False
         return new_self
+
+    def save_image(self):
+        pass
+
 
     @property 
     def fitness(self):
